@@ -29,14 +29,14 @@
 <body class="bg-gray-900 text-white" x-data="{
     selectedCategory: '',
     selectedColor: '',
-    categories: ['Nature', 'Space', 'Abstract', 'Technology'],
-    colors: ['Red', 'Blue', 'Green', 'Purple'],
-    wallpapers: [
-        {src: 'wallpaper1.jpg', category: 'Nature', color: 'Green'},
-        {src: 'wallpaper2.jpg', category: 'Space', color: 'Blue'},
-        {src: 'wallpaper3.jpg', category: 'Abstract', color: 'Red'},
-        {src: 'wallpaper4.jpg', category: 'Technology', color: 'Purple'}
+    categories: [
+        { name: 'Nature', bg: 'url(nature-bg.jpg)' },
+        { name: 'Space', bg: 'url(space-bg.jpg)' },
+        { name: 'Abstract', bg: 'url(abstract-bg.jpg)' },
+        { name: 'Technology', bg: 'url(tech-bg.jpg)' }
     ],
+    colors: ['Red', 'Blue', 'Green', 'Purple'],
+    wallpapers: [],
     newWallpaper: {src: '', category: '', color: ''},
     addWallpaper(event) {
         const file = event.target.files[0];
@@ -51,50 +51,62 @@
     }
 }">
     <div class="container mx-auto py-10 px-5">
-        <h1 class="text-4xl font-bold text-center mb-10">AI Wallpapers</h1>
+        <h1 class="text-5xl font-extrabold text-center mb-10">AI Wallpapers</h1>
         
-        <!-- Search Filters -->
-        <div class="flex justify-center mb-5 space-x-4">
-            <select class="p-2 w-1/3 text-black" x-model="selectedCategory">
-                <option value="">All Categories</option>
-                <template x-for="category in categories" :key="category">
-                    <option :value="category" x-text="category"></option>
-                </template>
-            </select>
-            <select class="p-2 w-1/3 text-black" x-model="selectedColor">
-                <option value="">All Colors</option>
-                <template x-for="color in colors" :key="color">
-                    <option :value="color" x-text="color"></option>
-                </template>
-            </select>
+        <!-- Category Buttons -->
+        <div class="flex flex-wrap justify-center gap-4 mb-5">
+            <template x-for="category in categories" :key="category.name">
+                <button @click="selectedCategory = category.name" 
+                    class="px-6 py-3 rounded-lg text-white font-bold shadow-lg hover:shadow-xl transition bg-cover bg-center"
+                    :style="'background-image: ' + category.bg">
+                    <span class="backdrop-blur-lg px-2 py-1 bg-black bg-opacity-50 rounded">{{ category.name }}</span>
+                </button>
+            </template>
+        </div>
+        
+        <!-- Color Buttons -->
+        <div class="flex flex-wrap justify-center gap-2 mb-5">
+            <template x-for="color in colors" :key="color">
+                <button @click="selectedColor = color" 
+                    class="px-4 py-2 rounded-lg text-white font-bold shadow-lg hover:shadow-xl transition"
+                    :style="'background-color: ' + color.toLowerCase()">
+                    {{ color }}
+                </button>
+            </template>
         </div>
         
         <!-- Wallpaper Gallery -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             <template x-for="wallpaper in wallpapers.filter(w => (!selectedCategory || w.category === selectedCategory) && (!selectedColor || w.color === selectedColor))" :key="wallpaper.src">
-                <div class="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition transform hover:scale-105">
-                    <img :src="wallpaper.src" class="w-full h-48 object-cover">
-                    <button @click="window.location.href = wallpaper.src" class="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-lg opacity-90 hover:opacity-100 transition">Download</button>
+                <div class="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition transform hover:scale-105">
+                    <img :src="wallpaper.src" class="w-full h-48 object-cover rounded-xl">
+                    <button @click="window.location.href = wallpaper.src" class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded-xl opacity-90 hover:opacity-100 transition">Download</button>
                 </div>
             </template>
         </div>
         
         <!-- Admin Panel -->
-        <div class="mt-10 p-5 bg-gray-800 rounded-lg">
+        <div class="mt-10 p-6 bg-gray-800 rounded-xl">
             <h2 class="text-2xl font-bold mb-4">Admin Panel - Add New Wallpaper</h2>
-            <select class="p-2 w-full text-black mb-2" x-model="newWallpaper.category">
-                <option value="">Select Category</option>
-                <template x-for="category in categories" :key="category">
-                    <option :value="category" x-text="category"></option>
-                </template>
-            </select>
-            <select class="p-2 w-full text-black mb-2" x-model="newWallpaper.color">
-                <option value="">Select Color</option>
-                <template x-for="color in colors" :key="color">
-                    <option :value="color" x-text="color"></option>
-                </template>
-            </select>
-            <input type="file" class="p-2 w-full text-black mb-2" @change="addWallpaper">
+            <div class="mb-4">
+                <label class="block mb-2 font-semibold">Select Category</label>
+                <select class="p-3 w-full text-black rounded-lg" x-model="newWallpaper.category">
+                    <option value="">Choose Category</option>
+                    <template x-for="category in categories" :key="category.name">
+                        <option :value="category.name" x-text="category.name"></option>
+                    </template>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block mb-2 font-semibold">Select Color</label>
+                <select class="p-3 w-full text-black rounded-lg" x-model="newWallpaper.color">
+                    <option value="">Choose Color</option>
+                    <template x-for="color in colors" :key="color">
+                        <option :value="color" x-text="color"></option>
+                    </template>
+                </select>
+            </div>
+            <input type="file" class="p-3 w-full text-black rounded-lg mb-2" @change="addWallpaper">
         </div>
     </div>
 </body>
