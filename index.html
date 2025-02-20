@@ -6,10 +6,31 @@
     <title>AI Wallpapers</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+    <script>
+        // Disable right-click menu
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        
+        // Disable keyboard shortcuts for inspecting elements
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && (event.key === 'u' || event.key === 's' || event.key === 'i' || event.key === 'j' || event.key === 'c' || event.key === 'Shift')) {
+                event.preventDefault();
+            }
+        });
+    </script>
+    <style>
+        /* Disable image dragging */
+        img {
+            pointer-events: none;
+            user-drag: none;
+            -webkit-user-drag: none;
+        }
+    </style>
 </head>
 <body class="bg-gray-900 text-white" x-data="{
-    searchCategory: '',
-    searchColor: '',
+    selectedCategory: '',
+    selectedColor: '',
+    categories: ['Nature', 'Space', 'Abstract', 'Technology'],
+    colors: ['Red', 'Blue', 'Green', 'Purple'],
     wallpapers: [
         {src: 'wallpaper1.jpg', category: 'Nature', color: 'Green'},
         {src: 'wallpaper2.jpg', category: 'Space', color: 'Blue'},
@@ -17,10 +38,15 @@
         {src: 'wallpaper4.jpg', category: 'Technology', color: 'Purple'}
     ],
     newWallpaper: {src: '', category: '', color: ''},
-    addWallpaper() {
-        if(this.newWallpaper.src && this.newWallpaper.category && this.newWallpaper.color) {
-            this.wallpapers.push({...this.newWallpaper});
-            this.newWallpaper = {src: '', category: '', color: ''};
+    addWallpaper(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.wallpapers.push({ src: e.target.result, category: this.newWallpaper.category, color: this.newWallpaper.color });
+                this.newWallpaper = {src: '', category: '', color: ''};
+            };
+            reader.readAsDataURL(file);
         }
     }
 }">
@@ -29,16 +55,26 @@
         
         <!-- Search Filters -->
         <div class="flex justify-center mb-5 space-x-4">
-            <input type="text" placeholder="Search by Category..." class="p-2 w-1/3 text-black" x-model="searchCategory">
-            <input type="text" placeholder="Search by Color..." class="p-2 w-1/3 text-black" x-model="searchColor">
+            <select class="p-2 w-1/3 text-black" x-model="selectedCategory">
+                <option value="">All Categories</option>
+                <template x-for="category in categories" :key="category">
+                    <option :value="category" x-text="category"></option>
+                </template>
+            </select>
+            <select class="p-2 w-1/3 text-black" x-model="selectedColor">
+                <option value="">All Colors</option>
+                <template x-for="color in colors" :key="color">
+                    <option :value="color" x-text="color"></option>
+                </template>
+            </select>
         </div>
         
         <!-- Wallpaper Gallery -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <template x-for="wallpaper in wallpapers.filter(w => (w.category.toLowerCase().includes(searchCategory.toLowerCase()) && w.color.toLowerCase().includes(searchColor.toLowerCase())))" :key="wallpaper.src">
-                <div class="relative group">
-                    <img :src="wallpaper.src" class="w-full h-48 object-cover rounded-lg transition transform group-hover:scale-105">
-                    <button @click="showAd(wallpaper.src)" class="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition">Download</button>
+            <template x-for="wallpaper in wallpapers.filter(w => (!selectedCategory || w.category === selectedCategory) && (!selectedColor || w.color === selectedColor))" :key="wallpaper.src">
+                <div class="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                    <img :src="wallpaper.src" class="w-full h-48 object-cover">
+                    <button @click="window.location.href = wallpaper.src" class="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-lg opacity-90 hover:opacity-100 transition">Download</button>
                 </div>
             </template>
         </div>
@@ -46,21 +82,20 @@
         <!-- Admin Panel -->
         <div class="mt-10 p-5 bg-gray-800 rounded-lg">
             <h2 class="text-2xl font-bold mb-4">Admin Panel - Add New Wallpaper</h2>
-            <input type="text" placeholder="Image URL" class="p-2 w-full text-black mb-2" x-model="newWallpaper.src">
-            <input type="text" placeholder="Category" class="p-2 w-full text-black mb-2" x-model="newWallpaper.category">
-            <input type="text" placeholder="Color" class="p-2 w-full text-black mb-2" x-model="newWallpaper.color">
-            <button @click="addWallpaper" class="bg-green-500 px-4 py-2 rounded-lg">Add Wallpaper</button>
+            <select class="p-2 w-full text-black mb-2" x-model="newWallpaper.category">
+                <option value="">Select Category</option>
+                <template x-for="category in categories" :key="category">
+                    <option :value="category" x-text="category"></option>
+                </template>
+            </select>
+            <select class="p-2 w-full text-black mb-2" x-model="newWallpaper.color">
+                <option value="">Select Color</option>
+                <template x-for="color in colors" :key="color">
+                    <option :value="color" x-text="color"></option>
+                </template>
+            </select>
+            <input type="file" class="p-2 w-full text-black mb-2" @change="addWallpaper">
         </div>
     </div>
-    
-    <!-- Script for Ad before Download -->
-    <script>
-        function showAd(imageSrc) {
-            alert("Please wait, loading advertisement...");
-            setTimeout(() => {
-                window.location.href = imageSrc; // Simulate download after ad
-            }, 3000); // Simulate ad delay
-        }
-    </script>
 </body>
 </html>
