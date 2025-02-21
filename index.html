@@ -3,117 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Wallpapers</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
-    <script>
-        // Disable right-click menu
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        
-        // Disable keyboard shortcuts for inspecting elements
-        document.addEventListener('keydown', function(event) {
-            if (event.ctrlKey && (event.key === 'u' || event.key === 's' || event.key === 'i' || event.key === 'j' || event.key === 'c' || event.key === 'Shift')) {
-                event.preventDefault();
-            }
-        });
-    </script>
-    <style>
-        /* Disable image dragging */
-        img {
-            pointer-events: none;
-            user-drag: none;
-            -webkit-user-drag: none;
-        }
-        .category-button {
-            background-size: cover;
-            background-position: center;
-            color: white;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-        }
-    </style>
+    <title>HeavenWallpaper</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-900 text-white" x-data="{
-    selectedCategory: '',
-    selectedColor: '',
-    categories: [
-        { name: 'Nature', image: 'https://source.unsplash.com/600x400/?forest' },
-        { name: 'Space', image: 'https://source.unsplash.com/600x400/?galaxy' },
-        { name: 'Abstract', image: 'https://source.unsplash.com/600x400/?abstract' },
-        { name: 'Technology', image: 'https://source.unsplash.com/600x400/?technology' }
-    ],
-    colors: ['Red', 'Blue', 'Green', 'Purple'],
-    wallpapers: [],
-    newWallpaper: {src: '', category: '', color: ''},
-    addWallpaper(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.wallpapers.push({ src: e.target.result, category: this.newWallpaper.category, color: this.newWallpaper.color });
-                this.newWallpaper = {src: '', category: '', color: ''};
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-}">
-    <div class="container mx-auto py-10 px-5 text-center">
-        <h1 class="text-5xl font-extrabold mb-10">AI Wallpapers</h1>
-        
-        <!-- Category Buttons -->
-        <div class="flex flex-wrap justify-center gap-4 mb-5">
-            <template x-for="category in categories" :key="category.name">
-                <button @click="selectedCategory = category.name" class="px-6 py-3 rounded-xl category-button" 
-                        :style="'background-image: url(' + category.image + ');'">
-                    <span x-text="category.name"></span>
-                </button>
-            </template>
-        </div>
-        
-        <!-- Color Category Buttons -->
-        <div class="flex flex-wrap justify-center gap-4 mb-5">
-            <template x-for="color in colors" :key="color">
-                <button @click="selectedColor = color" class="px-6 py-3 rounded-xl text-white font-bold shadow-lg" 
-                        :style="'background-color: ' + color.toLowerCase()">
-                    <span x-text="color"></span>
-                </button>
-            </template>
+<body>
+    <h1>HeavenWallpaper</h1>
+    <div class="container">
+        <!-- Left Sidebar - Color Buttons -->
+        <div class="sidebar" id="colorButtons">
+            <h2>Color Categories</h2>
         </div>
 
-        <!-- Wallpaper Gallery -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <template x-for="wallpaper in wallpapers.filter(w => (!selectedCategory || w.category === selectedCategory) && (!selectedColor || w.color === selectedColor))" :key="wallpaper.src">
-                <div class="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition transform hover:scale-105">
-                    <img :src="wallpaper.src" class="w-full h-48 object-cover rounded-xl">
-                    <button @click="window.location.href = wallpaper.src" class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded-xl opacity-90 hover:opacity-100 transition">Download</button>
-                </div>
-            </template>
+        <!-- Main Content - Categories -->
+        <div class="main-content" id="categories">
+            <h2>Main Content - Categories</h2>
         </div>
-        
-        <!-- Admin Panel -->
-        <div class="mt-10 p-6 bg-gray-800 rounded-xl">
-            <h2 class="text-2xl font-bold mb-4">Admin Panel - Add New Wallpaper</h2>
-            <div class="mb-4">
-                <label class="block mb-2 font-semibold">Select Category</label>
-                <select class="p-3 w-full text-black rounded-lg" x-model="newWallpaper.category">
-                    <option value="">Choose Category</option>
-                    <template x-for="category in categories" :key="category.name">
-                        <option :value="category.name" x-text="category.name"></option>
-                    </template>
-                </select>
-            </div>
-            <div class="mb-4">
-                <label class="block mb-2 font-semibold">Select Color</label>
-                <select class="p-3 w-full text-black rounded-lg" x-model="newWallpaper.color">
-                    <option value="">Choose Color</option>
-                    <template x-for="color in colors" :key="color">
-                        <option :value="color" x-text="color"></option>
-                    </template>
-                </select>
-            </div>
-            <input type="file" class="p-3 w-full text-black rounded-lg mb-2" @change="addWallpaper">
+
+        <!-- Right Sidebar - Category Menu -->
+        <div class="sidebar" id="categoryMenu">
+            <h2>Category Menu</h2>
         </div>
     </div>
+
+    <!-- Admin Panel -->
+    <button id="adminToggle">Admin Panel</button>
+    <div id="adminPanel" class="hidden">
+        <h2>Admin Panel</h2>
+        <label for="categorySelect">Select Category:</label>
+        <select id="categorySelect"></select>
+        <br>
+        <input type="file" id="imageUpload">
+        <button id="uploadButton">Upload</button>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
 
