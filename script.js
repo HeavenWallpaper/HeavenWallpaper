@@ -12,12 +12,18 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
 
-document.addEventListener("DOMContentLoaded", () => {
-    const categories = [
-        { name: "Nature", image: "images/nature.jpg" },
-        { name: "Space", image: "images/space.jpg" },
-        { name: "Abstract", image: "images/abstract.jpg" }
-    ];
+document.addEventListener("click", (event) => {
+    if (event.target.classList.contains("download-btn")) {
+        event.preventDefault();
+        
+        const imageUrl = event.target.dataset.image;
+        
+        setTimeout(() => {
+            window.open(imageUrl, "_blank");
+        }, 3000);
+    }
+});
+
 
     const colors = [
         { name: "Green", color: "#28a745" },
@@ -97,28 +103,28 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function loadWallpapersByColor(color) {
-        wallpapersContainer.innerHTML = "";
-        for (let i = 1; i <= 5; i++) {
-            const wallpaper = document.createElement("div");
-            wallpaper.classList.add("wallpaper-item");
-            wallpaper.innerHTML = `
-                <img src="images/${color.toLowerCase()}-${i}.jpg" alt="${color} Wallpaper">
-                <button class="download-btn" data-image="images/${color.toLowerCase()}-${i}.jpg">Download</button>
-            `;
-            wallpapersContainer.appendChild(wallpaper);
-        }
-    }
+    function loadWallpapers(category) {
+    wallpapersContainer.innerHTML = "";
 
-    document.addEventListener("click", (event) => {
-        if (event.target.classList.contains("download-btn")) {
-            event.preventDefault();
-            setTimeout(() => {
-                const imageUrl = event.target.dataset.image;
-                window.open(imageUrl, "_blank");
-            }, 3000);
-        }
+    const storageRef = storage.ref("wallpapers");
+
+    storageRef.listAll().then(result => {
+        result.items.forEach(itemRef => {
+            itemRef.getDownloadURL().then(url => {
+                const wallpaper = document.createElement("div");
+                wallpaper.classList.add("wallpaper-item");
+                wallpaper.innerHTML = `
+                    <img src="${url}" alt="${category} Wallpaper">
+                    <button class="download-btn" data-image="${url}">Download</button>
+                `;
+                wallpapersContainer.appendChild(wallpaper);
+            });
+        });
+    }).catch(error => {
+        console.error("Errore nel caricamento delle immagini:", error);
     });
+}
+
 
     categories.forEach(cat => {
         const option = document.createElement("option");
@@ -160,6 +166,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
     .catch(error => console.error("Errore:", error));
+});
+uploadButton.addEventListener("click", () => {
+    const file = imageUpload.files[0];
+    const selectedCategories = Array.from(categorySelect.selectedOptions).map(option => option.value);
+
+    if (file) {
+        const storageRef = storage.ref(`wallpapers/${file.name}`);
+        const uploadTask = storageRef.put(file);
+
+        uploadTask.on("state_changed", 
+            snapshot => {
+                console.log(`Caricamento: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100}%`);
+            }, 
+            error => {
+                console.error("Errore nel caricamento:", error);
+            }, 
+            () => {
+                uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                    console.log(`File disponibile all'URL: ${downloadURL}`);
+                    alert("Upload completato!");
+
+                    // Puoi aggiornare il database con il link dell'immagine
+                });
+            }
+        );
+    } else {
+        alert("Seleziona un file prima di caricare!");
+    }
 });
 
 
