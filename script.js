@@ -90,8 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
         adContainer.innerHTML = `
             <ins class="adsbygoogle"
                  style="display:block"
-                 data-ad-client="ca-pub-XXXXXXXXXXXXXXX" 
-                 data-ad-slot="YYYYYYYYYY"
+                 data-ad-client="ca-pub-9886017981009232" 
+                 data-ad-slot="4586711336"
                  data-ad-format="auto"></ins>
         `;
         
