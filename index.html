@@ -9,19 +9,19 @@
 <body>
     <h1>HeavenWallpaper</h1>
     <div class="container">
-        <!-- Left Sidebar - Color Buttons -->
-        <div class="sidebar" id="colorButtons">
-            <h2>Color Categories</h2>
+        <!-- Left Sidebar - Color Buttons (Dropdown) -->
+        <div class="sidebar">
+            <button class="dropdown-btn" onclick="toggleDropdown('colorDropdown')">Color Categories</button>
+            <div class="dropdown-content hidden" id="colorDropdown"></div>
         </div>
 
-        <!-- Main Content - Categories -->
-        <div class="main-content" id="categories">
-            <h2>Main Content - Categories</h2>
-        </div>
+        <!-- Main Content - Wallpapers -->
+        <div class="main-content" id="wallpapers"></div>
 
-        <!-- Right Sidebar - Category Menu -->
-        <div class="sidebar" id="categoryMenu">
-            <h2>Category Menu</h2>
+        <!-- Right Sidebar - Category Menu (Dropdown) -->
+        <div class="sidebar">
+            <button class="dropdown-btn" onclick="toggleDropdown('categoryDropdown')">Category Menu</button>
+            <div class="dropdown-content hidden" id="categoryDropdown"></div>
         </div>
     </div>
 
@@ -39,4 +39,5 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
