@@ -1,3 +1,17 @@
+// 🔹 CONFIGURAZIONE FIREBASE (Sostituisci con i tuoi dati!)
+const firebaseConfig = {
+    apiKey: "LA_TUA_API_KEY",
+    authDomain: "IL_TUO_DOMINIO.firebaseapp.com",
+    projectId: "IL_TUO_PROJECT_ID",
+    storageBucket: "IL_TUO_BUCKET.appspot.com",
+    messagingSenderId: "IL_TUO_ID_MESSAGGI",
+    appId: "IL_TUO_APP_ID"
+};
+
+// 🔹 Inizializza Firebase
+firebase.initializeApp(firebaseConfig);
+const storage = firebase.storage();
+
 document.addEventListener("DOMContentLoaded", () => {
     const categories = [
         { name: "Nature", image: "images/nature.jpg" },
@@ -147,5 +161,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(error => console.error("Errore:", error));
 });
+
 
 
