@@ -39,22 +39,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Protezione admin con password
-    adminToggle.addEventListener("click", () => {
-        const password = prompt("Inserisci la password per accedere all'admin panel:");
-        if (password === "porcaporcaporcamadonna") {
-            adminPanel.classList.toggle("hidden");
-        } else {
-            alert("Accesso negato!");
-        }
-    });
+    // Modulo di login per accesso admin
+    function showLoginModal() {
+        const loginModal = document.createElement("div");
+        loginModal.innerHTML = `
+            <div class="login-modal">
+                <h2>Admin Login</h2>
+                <input type="password" id="adminPassword" placeholder="Inserisci password">
+                <button id="loginButton">Login</button>
+            </div>
+        `;
+        document.body.appendChild(loginModal);
+
+        document.getElementById("loginButton").addEventListener("click", () => {
+            const password = document.getElementById("adminPassword").value;
+            if (password === "tua_password_sicura") {
+                adminPanel.classList.remove("hidden");
+                loginModal.remove();
+            }
+        });
+    }
+
+    adminToggle.addEventListener("click", showLoginModal);
 
     // Populate color buttons
     colors.forEach(color => {
         const btn = document.createElement("button");
         btn.style.background = color.color;
         btn.textContent = color.name;
-        btn.onclick = () => console.log(`Selected Color: ${color.name}`);
         colorButtons.appendChild(btn);
     });
 
@@ -69,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function loadWallpapers(category) {
-        wallpapersContainer.innerHTML = ""; // Clear previous wallpapers
+        wallpapersContainer.innerHTML = "";
         for (let i = 1; i <= 5; i++) {
             const wallpaper = document.createElement("div");
             wallpaper.classList.add("wallpaper-item");
@@ -81,32 +93,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    document.querySelectorAll(".download-btn").forEach(button => {
-    button.addEventListener("click", (event) => {
-        event.preventDefault();
-        
-        // Crea un div per l'annuncio
-        const adContainer = document.createElement("div");
-        adContainer.innerHTML = `
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-9886017981009232" 
-                 data-ad-slot="4586711336"
-                 data-ad-format="auto"></ins>
-        `;
-        
-        document.body.appendChild(adContainer);
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        
-        // Dopo un paio di secondi, avvia il download
-        setTimeout(() => {
-            const imageUrl = event.target.dataset.image;
-            window.open(imageUrl, "_blank");
-            document.body.removeChild(adContainer); // Rimuove l'annuncio dopo il click
-        }, 2000); // Attendi 2 secondi per mostrare l'annuncio
+    document.addEventListener("click", (event) => {
+        if (event.target.classList.contains("download-btn")) {
+            event.preventDefault();
+            setTimeout(() => {
+                const imageUrl = event.target.dataset.image;
+                window.open(imageUrl, "_blank");
+            }, 3000);
+        }
     });
-});
-
 
     // Populate admin category select
     categories.forEach(cat => {
@@ -121,8 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const file = imageUpload.files[0];
         if (file) {
             console.log(`Uploaded: ${file.name} to category ${categorySelect.value}`);
-        } else {
-            console.log("No file selected");
         }
     });
 });
