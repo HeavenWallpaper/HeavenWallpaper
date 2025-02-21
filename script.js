@@ -31,15 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const categorySelect = document.getElementById("categorySelect");
     const imageUpload = document.getElementById("imageUpload");
 
-    // Protezione anti copia del codice
-    document.addEventListener("contextmenu", event => event.preventDefault());
-    document.addEventListener("keydown", event => {
-        if (event.ctrlKey && (event.key === "u" || event.key === "s" || event.key === "c")) {
-            event.preventDefault();
-        }
-    });
-
-    // Modulo di login per accesso admin
     function showLoginModal() {
         const loginModal = document.createElement("div");
         loginModal.innerHTML = `
@@ -53,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById("loginButton").addEventListener("click", () => {
             const password = document.getElementById("adminPassword").value;
-            if (password === "tua_password_sicura") {
+            if (password === "porcaporcaporcamadonna") {
                 adminPanel.classList.remove("hidden");
                 loginModal.remove();
             }
@@ -62,15 +53,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     adminToggle.addEventListener("click", showLoginModal);
 
-    // Populate color buttons
     colors.forEach(color => {
         const btn = document.createElement("button");
         btn.style.background = color.color;
         btn.textContent = color.name;
+        btn.onclick = () => loadWallpapersByColor(color.name);
         colorButtons.appendChild(btn);
     });
 
-    // Populate categories menu
     categories.forEach(cat => {
         const btn = document.createElement("button");
         btn.style.backgroundImage = `url(${cat.image})`;
@@ -93,6 +83,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function loadWallpapersByColor(color) {
+        wallpapersContainer.innerHTML = "";
+        for (let i = 1; i <= 5; i++) {
+            const wallpaper = document.createElement("div");
+            wallpaper.classList.add("wallpaper-item");
+            wallpaper.innerHTML = `
+                <img src="images/${color.toLowerCase()}-${i}.jpg" alt="${color} Wallpaper">
+                <button class="download-btn" data-image="images/${color.toLowerCase()}-${i}.jpg">Download</button>
+            `;
+            wallpapersContainer.appendChild(wallpaper);
+        }
+    }
+
     document.addEventListener("click", (event) => {
         if (event.target.classList.contains("download-btn")) {
             event.preventDefault();
@@ -103,7 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Populate admin category select
     categories.forEach(cat => {
         const option = document.createElement("option");
         option.value = cat.name;
@@ -111,11 +113,19 @@ document.addEventListener("DOMContentLoaded", () => {
         categorySelect.appendChild(option);
     });
 
-    // Upload button functionality (mockup)
+    colors.forEach(color => {
+        const option = document.createElement("option");
+        option.value = color.name;
+        option.textContent = color.name;
+        categorySelect.appendChild(option);
+    });
+
     uploadButton.addEventListener("click", () => {
         const file = imageUpload.files[0];
+        const selectedCategories = Array.from(categorySelect.selectedOptions).map(option => option.value);
         if (file) {
-            console.log(`Uploaded: ${file.name} to category ${categorySelect.value}`);
+            console.log(`Uploaded: ${file.name} to categories ${selectedCategories.join(", ")}`);
         }
     });
 });
+
