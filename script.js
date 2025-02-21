@@ -121,11 +121,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     uploadButton.addEventListener("click", () => {
-        const file = imageUpload.files[0];
-        const selectedCategories = Array.from(categorySelect.selectedOptions).map(option => option.value);
-        if (file) {
-            console.log(`Uploaded: ${file.name} to categories ${selectedCategories.join(", ")}`);
+    const file = imageUpload.files[0];
+    const selectedCategories = Array.from(categorySelect.selectedOptions).map(option => option.value);
+
+    if (!file) {
+        alert("Seleziona un file prima di caricare!");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetch("upload.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("File caricato con successo!");
+            console.log(`File salvato in: ${data.file} nelle categorie: ${selectedCategories.join(", ")}`);
+        } else {
+            alert("Errore nel caricamento: " + data.message);
         }
-    });
+    })
+    .catch(error => console.error("Errore:", error));
 });
+
 
