@@ -31,6 +31,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const categorySelect = document.getElementById("categorySelect");
     const imageUpload = document.getElementById("imageUpload");
 
+    // Protezione anti copia del codice
+    document.addEventListener("contextmenu", event => event.preventDefault());
+    document.addEventListener("keydown", event => {
+        if (event.ctrlKey && (event.key === "u" || event.key === "s" || event.key === "c")) {
+            event.preventDefault();
+        }
+    });
+
+    // Protezione admin con password
+    adminToggle.addEventListener("click", () => {
+        const password = prompt("Inserisci la password per accedere all'admin panel:");
+        if (password === "porcaporcaporcamadonna") {
+            adminPanel.classList.toggle("hidden");
+        } else {
+            alert("Accesso negato!");
+        }
+    });
+
     // Populate color buttons
     colors.forEach(color => {
         const btn = document.createElement("button");
@@ -66,15 +84,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".download-btn").forEach(button => {
         button.addEventListener("click", (event) => {
             const imageUrl = event.target.dataset.image;
-            // Inserisci qui il codice dell'annuncio pubblicitario
             console.log("Ad logic goes here");
             window.open(imageUrl, "_blank");
         });
-    });
-
-    // Toggle admin panel
-    adminToggle.addEventListener("click", () => {
-        adminPanel.classList.toggle("hidden");
     });
 
     // Populate admin category select
