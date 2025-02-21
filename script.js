@@ -1,11 +1,12 @@
 // 🔹 CONFIGURAZIONE FIREBASE (Sostituisci con i tuoi dati!)
 const firebaseConfig = {
-    apiKey: "LA_TUA_API_KEY",
-    authDomain: "IL_TUO_DOMINIO.firebaseapp.com",
-    projectId: "IL_TUO_PROJECT_ID",
-    storageBucket: "IL_TUO_BUCKET.appspot.com",
-    messagingSenderId: "IL_TUO_ID_MESSAGGI",
-    appId: "IL_TUO_APP_ID"
+    apiKey: "AIzaSyASzC4SV5EAG0eIc7O6o6oerj08jbMIEQ0",
+  authDomain: "wallpaper-72fe4.firebaseapp.com",
+  projectId: "wallpaper-72fe4",
+  storageBucket: "wallpaper-72fe4.firebasestorage.app",
+  messagingSenderId: "877172055854",
+  appId: "1:877172055854:web:1581b99e87b519e10964bf",
+  measurementId: "G-3L0DKJ3468"
 };
 
 // 🔹 Inizializza Firebase
