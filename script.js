@@ -82,12 +82,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.querySelectorAll(".download-btn").forEach(button => {
-        button.addEventListener("click", (event) => {
+    button.addEventListener("click", (event) => {
+        event.preventDefault();
+        
+        // Crea un div per l'annuncio
+        const adContainer = document.createElement("div");
+        adContainer.innerHTML = `
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXX" 
+                 data-ad-slot="YYYYYYYYYY"
+                 data-ad-format="auto"></ins>
+        `;
+        
+        document.body.appendChild(adContainer);
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        
+        // Dopo un paio di secondi, avvia il download
+        setTimeout(() => {
             const imageUrl = event.target.dataset.image;
-            console.log("Ad logic goes here");
             window.open(imageUrl, "_blank");
-        });
+            document.body.removeChild(adContainer); // Rimuove l'annuncio dopo il click
+        }, 2000); // Attendi 2 secondi per mostrare l'annuncio
     });
+});
+
 
     // Populate admin category select
     categories.forEach(cat => {
